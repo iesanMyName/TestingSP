@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Workflow PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Workflow explicitTransitions="true" name="Identity JDBC edits">
+  <Variable name="selectedUser"/>
+  <Variable initializer="true" name="trace"/>
+  <Step icon="Start" name="Start" posX="27" posY="97">
+    <Transition to="Select"/>
+  </Step>
+  <Step icon="Default" name="Select" posX="123" posY="101">
+    <Approval name="selectOne" owner="spadmin" return="selectedOption" send="">
+      <Form name="selectOne">
+        <Attributes>
+          <Map>
+            <entry key="isWizard">
+              <value>
+                <Boolean/>
+              </value>
+            </entry>
+            <entry key="pageTitle" value="selectOne"/>
+          </Map>
+        </Attributes>
+        <Section name="Section 1">
+          <Field name="selectedOption" type="string">
+            <AllowedValuesDefinition>
+              <Value>
+                <List>
+                  <String>create</String>
+                  <String>update</String>
+                  <String>delete</String>
+                </List>
+              </Value>
+            </AllowedValuesDefinition>
+          </Field>
+        </Section>
+        <Button action="next" label="Submit"/>
+      </Form>
+    </Approval>
+    <Transition to="createStep">
+      <Script>
+        <Source><![CDATA[
+if(selectedOption.equals("create"))
+{
+return true;
+
+}]]></Source>
+      </Script>
+    </Transition>
+    <Transition to="deleteStep">
+      <Script>
+        <Source><![CDATA[if(selectedOption.equals("delete"))
+{
+return true;
+}]]></Source>
+      </Script>
+    </Transition>
+    <Transition to="Update select">
+      <Script>
+        <Source><![CDATA[if(selectedOption.equals("update"))
+{
+return true;
+
+}]]></Source>
+      </Script>
+    </Transition>
+  </Step>
+  <Step icon="Default" name="createStep" posX="182" posY="9">
+    <Approval name="createForm" owner="spadmin" return="" send="">
+      <Form name="createForm">
+        <Attributes>
+          <Map>
+            <entry key="pageTitle" value="createForm"/>
+          </Map>
+        </Attributes>
+        <Section name="Section 1">
+          <Field name="Field 1" type="string"/>
+        </Section>
+        <Button action="next" label="Next"/>
+      </Form>
+    </Approval>
+  </Step>
+  <Step icon="Default" name="updateStep" posX="361" posY="94">
+    <Approval name="UpdateStep" owner="spadmin" return="" send="selectedUser">
+      <Form name="UpdateStep">
+        <Attributes>
+          <Map>
+            <entry key="pageTitle" value="UpdateStep"/>
+          </Map>
+        </Attributes>
+        <Section columns="3" name="Identity information">
+        <Field columnSpan="1" displayName="User ID" name="selectedUser" type="string">
+            <Script>
+              <Source><![CDATA[
+             return "null";
+]]></Source>
+            </Script>
+          </Field>
+          <Field columnSpan="1" displayName="Status" displayOnly="true" name="Status" type="string"/>
+          <Field columnSpan="1" displayOnly="true" name="Field 6" type="string"/>
+        </Section>
+        <Section columns="2" label="Modify User details" name="updateDetails">
+          <Field columnSpan="2" displayName="UserID" name="UserID" type="string"/>
+          <Field columnSpan="1" displayName="Termination date" name="terminationDate" type="date"/>
+          <Field columnSpan="1" displayName="userStatus" name="status" type="string">
+            <AllowedValuesDefinition>
+              <Value>
+                <List>
+                  <String>A</String>
+                  <String>T</String>
+                </List>
+              </Value>
+            </AllowedValuesDefinition>
+          </Field>
+        </Section>
+        <Button action="next" label="Update"/>
+      </Form>
+    </Approval>
+  </Step>
+  <Step icon="Default" name="deleteStep" posX="192" posY="182"/>
+  <Step icon="Default" name="Update select" posX="264" posY="95">
+    <Approval name="select identity update" owner="spadmin" return="selectedUser" send="selectedUser">
+      <Form name="select identity update">
+        <Attributes>
+          <Map>
+            <entry key="isWizard">
+              <value>
+                <Boolean/>
+              </value>
+            </entry>
+            <entry key="pageTitle" value="select identity update"/>
+          </Map>
+        </Attributes>
+        <Section label="Select the identity to modify" name="Select">
+          <Field displayName="Select User" name="selectedUser" postBack="true" required="true" type="sailpoint.object.Identity"/>
+        </Section>
+        <Button action="next" label="Next"/>
+      </Form>
+    </Approval>
+    <Transition to="updateStep"/>
+  </Step>
+</Workflow>
